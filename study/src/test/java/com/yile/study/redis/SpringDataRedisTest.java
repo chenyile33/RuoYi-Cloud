@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+import java.util.Map;
 
 /**
  * @author chenyile
@@ -17,6 +20,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class SpringDataRedisTest {
     @Autowired
     RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
     @Test
     void testString() {
@@ -32,6 +38,19 @@ public class SpringDataRedisTest {
         redisTemplate.opsForValue().set(key, user);
         User o = (User) redisTemplate.opsForValue().get(key);
         System.out.println(o);
+    }
+
+    @Test
+    void testHash() {
+        String key = "user:1";
+        stringRedisTemplate.opsForHash().put(key, "name", "cyl");
+        stringRedisTemplate.opsForHash().put(key, "age", "26");
+        stringRedisTemplate.opsForHash().put(key, "address", "江西省丰城市");
+        //获取key的所有hash键值对
+        Map<Object, Object> entries = stringRedisTemplate.opsForHash().entries(key);
+        entries.forEach((k, v) -> {
+            System.out.println(k + " : " + v);
+        });
     }
 }
 
